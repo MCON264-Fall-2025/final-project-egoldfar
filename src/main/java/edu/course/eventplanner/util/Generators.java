@@ -7,7 +7,7 @@ public class Generators {
     public static List<Venue> generateVenues() {
         return List.of(
             new Venue("Community Hall",1500,40,5,8),
-            new Venue("Garden Hall",2500,60,8,8),
+            new Venue("Garden Hall",2500,80,8,10),
             new Venue("Grand Ballroom",5000,120,15,8)
         );
     }
