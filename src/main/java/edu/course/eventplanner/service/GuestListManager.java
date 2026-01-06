@@ -13,7 +13,12 @@ public class GuestListManager {
     }
 
     public boolean removeGuest(String guestName) {
-        return guests.remove(guestName);
+        Guest guest = guestByName.get(guestName);
+        if (guest != null) {
+            guestByName.remove(guestName);
+            return guests.remove(guest);
+        }
+        return false;
     }
 
     public Guest findGuest(String guestName) {
