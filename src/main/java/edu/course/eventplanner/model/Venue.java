@@ -1,6 +1,8 @@
 package edu.course.eventplanner.model;
 
-public class Venue {
+import java.util.InputMismatchException;
+
+public class Venue implements Comparable{
     private final String name;
     private final double cost;
     private final int capacity;
@@ -18,4 +20,26 @@ public class Venue {
     public int getCapacity() { return capacity; }
     public int getTables() { return tables; }
     public int getSeatsPerTable() { return seatsPerTable; }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Venue) {
+            Venue other = (Venue)o;
+            if (this.cost < other.cost) {
+                return -1;
+            } else if (this.cost > other.cost) {
+                return 1;
+            } else {
+                if (this.capacity < other.capacity) {
+                    return -1;
+                } else if (this.capacity > other.capacity) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        } else {
+            throw new InputMismatchException("Object entered must be of type Venue.");
+        }
+    }
 }

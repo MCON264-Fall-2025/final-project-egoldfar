@@ -8,17 +8,19 @@ public class VenueSelector {
 
     public VenueSelector(List<Venue> venues) { this.venues = venues; }
     public Venue selectVenue(double budget, int guestCount) {
+        Collections.sort(venues);
         Venue venue = null;
-        for (Venue v : venues) {
-            if(v.getCost()<=budget){
-                if(v.getCapacity()>=guestCount){
+        int i = 0;
+        Venue next = venues.get(i);
+        while (next.getCost() <= budget && i < venues.size()) {
+                if(next.getCapacity()>=guestCount){
                     if(venue==null){
-                        venue = v;
-                    } else if (v.getCost() < venue.getCost()) {
-                        venue = v;
+                        venue = next;
+                    } else if (next.getCost() < venue.getCost()) {
+                        venue = next;
                     }
                 }
-            }
+                next = venues.get(i++);
         }
         return venue;
     }
