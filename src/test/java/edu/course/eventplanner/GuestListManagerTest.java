@@ -4,14 +4,11 @@ import edu.course.eventplanner.model.Guest;
 import edu.course.eventplanner.service.GuestListManager;
 
 import edu.course.eventplanner.util.Generators;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GuestListManagerTest {
 
@@ -45,7 +42,6 @@ public class GuestListManagerTest {
     public void testRemoveGuest() {
         Guest temp = new Guest("Random Use", "family");
         guestListManager.addGuest(temp);
-        assertTrue(guestListManager.removeGuest("Random Use"));
         assertFalse(guestListManager.removeGuest("Random Use"));
     }
 
@@ -53,7 +49,19 @@ public class GuestListManagerTest {
     public void testFindGuest() {
         Guest temp = new Guest("Random Use", "family");
         guestListManager.addGuest(temp);
+        assertTrue(guestListManager.removeGuest("Random Use"));
         assertEquals(temp, guestListManager.findGuest("Random Use"));
         assertNull(guestListManager.findGuest("qwertyuiop"));
+    }
+
+    @Test
+    public void testGetGuestsByGroup() {
+        Map<String, ArrayList<Guest>> seating = guestListManager.getGuestsByGroup();
+        Set<String> seatingKeys = seating.keySet();
+        for (String s : seatingKeys) {
+            for(Guest g :seating.get(s)) {
+                assertEquals(s,g.getGroupTag());
+            }
+        }
     }
 }

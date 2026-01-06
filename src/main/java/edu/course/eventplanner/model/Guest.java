@@ -1,5 +1,7 @@
 package edu.course.eventplanner.model;
 
+import java.util.HashMap;
+
 public class Guest {
     private final String name;
     private final String groupTag;
@@ -9,4 +11,5 @@ public class Guest {
     }
     public String getName() { return name; }
     public String getGroupTag() { return groupTag; }
+
 }

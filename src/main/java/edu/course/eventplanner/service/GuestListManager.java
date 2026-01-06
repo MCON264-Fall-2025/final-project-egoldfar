@@ -27,4 +27,17 @@ public class GuestListManager {
 
     public int getGuestCount() { return guests.size(); }
     public List<Guest> getAllGuests() { return guests; }
+
+    public Map<String, ArrayList<Guest>> getGuestsByGroup() {
+        Map<String, ArrayList<Guest>> seating = new HashMap<>();
+        for (Guest guest : guests) {
+            if (!seating.containsKey(guest.getGroupTag())) {
+                seating.put(guest.getGroupTag(), new ArrayList<Guest>());
+                seating.get(guest.getGroupTag()).add(guest);
+            } else {
+                seating.get(guest.getGroupTag()).add(guest);
+            }
+        }
+        return seating;
+    }
 }
