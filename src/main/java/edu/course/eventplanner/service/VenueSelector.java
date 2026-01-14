@@ -7,7 +7,11 @@ public class VenueSelector {
     private final List<Venue> venues;
 
     public VenueSelector(List<Venue> venues) { this.venues = new ArrayList<>(venues); }
+
     public Venue selectVenue(double budget, int guestCount) {
+        if (venues.isEmpty()) {
+            return null;
+        }
         Collections.sort(venues);
         Venue venue = null;
         int i = 0;
@@ -16,7 +20,7 @@ public class VenueSelector {
                 if(next.getCapacity()>=guestCount){
                     if(venue==null){
                         venue = next;
-                    } else if (next.getCost() < venue.getCost()) {
+                    } else if (next.getCapacity() < venue.getCapacity()) {
                         venue = next;
                     }
                 }

@@ -55,21 +55,23 @@ public class TaskManagerTest {
 
     @Test
     void testUndoingTasks(){
+        // Test that undoLastTask returns the most recently completed task (LIFO)
+        for(Task t : tasks){
+            taskManager.addTask(t);
+        }
+        
+        // Execute all tasks
         for(int i = 0; i < tasks.size(); i++){
-            for(int j = 0; j < i; j++){
-                taskManager.addTask(tasks.get(j));
-            }
-            taskManager.addTask(tasks.get(i));
-            assertEquals(i + 1, taskManager.remainingTaskCount());
-            for(int j = 0; j < i; j++){
-                taskManager.executeNextTask();
-            }
-            assertEquals(tasks.get(i), taskManager.executeNextTask());
-            assertEquals(0, taskManager.remainingTaskCount());
-            assertEquals(tasks.get(i), taskManager.undoLastTask());
-            assertEquals(1, taskManager.remainingTaskCount());
             taskManager.executeNextTask();
         }
-
+        assertEquals(0, taskManager.remainingTaskCount());
+        
+        // Undo should return tasks in reverse order (LIFO)
+        for(int i = tasks.size() - 1; i >= 0; i--){
+            assertEquals(tasks.get(i), taskManager.undoLastTask());
+        }
+        
+        // No more tasks to undo
+        assertNull(taskManager.undoLastTask());
     }
 }

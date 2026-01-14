@@ -22,7 +22,6 @@ public class TaskManager {
             return null;
         }
         Task undone = completed.pop();
-        upcoming.push(undone);
         return undone;
     }
     public int remainingTaskCount() { return upcoming.size(); }

@@ -4,40 +4,52 @@ import edu.course.eventplanner.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SeatingPlanner {
     private final Venue venue;
-    GuestListManager guestListManager;
-    public SeatingPlanner(Venue venue, GuestListManager guestListManager) {
+
+    public SeatingPlanner(Venue venue) {
         this.venue = venue;
-        this.guestListManager = guestListManager;
     }
-    public Map<Integer, Guest[]> generateSeating() {
+
+    public Map<Integer, List<Guest>> generateSeating(List<Guest> guests) {
         int seatsPerTable = venue.getSeatsPerTable();
         int currentTable = 0;
-        int currentGuest = 0;
-        Map<Integer,Guest[]> seating = new HashMap<>();
-        Map<String, ArrayList<Guest>> byGroup = guestListManager.getGuestsByGroup();
-            for(String key : byGroup.keySet()) {
-                ArrayList<Guest> groupGuests = byGroup.get(key);
-                int neededTablesForGroup = groupGuests.size() / seatsPerTable;
-                if (groupGuests.size() % seatsPerTable != 0) neededTablesForGroup++;
-                currentGuest = 0;
-                for(int i = 0; i < neededTablesForGroup; i++) {
-                    Guest[] tableGuests = new Guest[seatsPerTable];
-                    for(int j = 0; j < seatsPerTable; j++) {
-                        if (currentGuest < groupGuests.size()) {
-                            tableGuests[j] = groupGuests.get(currentGuest);
-                            currentGuest++;
-                        } else {
-                            tableGuests[j] = null;
-                        }
-                    }
-                    seating.put(currentTable, tableGuests);
-                    currentTable++;
-                }
+        Map<Integer, List<Guest>> seating = new HashMap<>();
+
+        if (guests == null || guests.isEmpty()) {
+            return seating;
+        }
+
+        // Group guests by their group tag
+        Map<String, ArrayList<Guest>> byGroup = new HashMap<>();
+        for (Guest guest : guests) {
+            if (!byGroup.containsKey(guest.getGroupTag())) {
+                byGroup.put(guest.getGroupTag(), new ArrayList<>());
             }
+            byGroup.get(guest.getGroupTag()).add(guest);
+        }
+
+        // Assign guests to tables, keeping groups together
+        for (String key : byGroup.keySet()) {
+            ArrayList<Guest> groupGuests = byGroup.get(key);
+            int neededTablesForGroup = groupGuests.size() / seatsPerTable;
+            if (groupGuests.size() % seatsPerTable != 0) neededTablesForGroup++;
+            int currentGuestIndex = 0;
+            for (int i = 0; i < neededTablesForGroup; i++) {
+                List<Guest> tableGuests = new ArrayList<>();
+                for (int j = 0; j < seatsPerTable; j++) {
+                    if (currentGuestIndex < groupGuests.size()) {
+                        tableGuests.add(groupGuests.get(currentGuestIndex));
+                        currentGuestIndex++;
+                    }
+                }
+                seating.put(currentTable, tableGuests);
+                currentTable++;
+            }
+        }
 
         return seating;
     }

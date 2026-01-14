@@ -49,13 +49,13 @@ public class Main {
                     } else {
                         venue = venueSelect(venueSelector, guestListManager);
                         if (venue != null) {
-                            seatingPlanner = new SeatingPlanner(venue, guestListManager);
+                            seatingPlanner = new SeatingPlanner(venue);
                         }
                     }
                     break;
                 case 5:
                     if (seatingPlanner != null) {
-                        seatGuests(seatingPlanner);
+                        seatGuests(seatingPlanner, guestListManager);
                     } else {
                         System.out.println("You must select a venue first.");
                     }
@@ -148,15 +148,13 @@ public class Main {
         return venue;
     }
 
-    public static void seatGuests(SeatingPlanner seatingPlanner) {
-        Map<Integer, Guest[]> seating = seatingPlanner.generateSeating();
+    public static void seatGuests(SeatingPlanner seatingPlanner, GuestListManager guestListManager) {
+        Map<Integer, List<Guest>> seating = seatingPlanner.generateSeating(guestListManager.getAllGuests());
         for (Integer tableNumber : seating.keySet()) {
             System.out.println("Table " + (tableNumber + 1) + ":");
-            Guest[] tableGuests = seating.get(tableNumber);
+            List<Guest> tableGuests = seating.get(tableNumber);
             for (Guest guest : tableGuests) {
-                if (guest != null) {
-                    System.out.println("  - " + guest.getName());
-                }
+                System.out.println("  - " + guest.getName());
             }
         }
     }
@@ -214,14 +212,12 @@ public class Main {
         // Seating information
         System.out.println("\n--- Seating Arrangement ---");
         if (seatingPlanner != null && guestListManager.getGuestCount() > 0) {
-            Map<Integer, Guest[]> seating = seatingPlanner.generateSeating();
+            Map<Integer, List<Guest>> seating = seatingPlanner.generateSeating(guestListManager.getAllGuests());
             for (Integer tableNumber : seating.keySet()) {
                 System.out.println("Table " + (tableNumber + 1) + ":");
-                Guest[] tableGuests = seating.get(tableNumber);
+                List<Guest> tableGuests = seating.get(tableNumber);
                 for (Guest guest : tableGuests) {
-                    if (guest != null) {
-                        System.out.println("  - " + guest.getName());
-                    }
+                    System.out.println("  - " + guest.getName());
                 }
             }
         } else if (venue == null) {

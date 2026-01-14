@@ -40,17 +40,23 @@ public class GuestListManagerTest {
 
     @Test
     public void testRemoveGuest() {
-        Guest temp = new Guest("Random Use", "family");
+        Guest temp = new Guest("Remove Test User", "family");
         guestListManager.addGuest(temp);
-        assertFalse(guestListManager.removeGuest("Random Use"));
+        numberOfGuests++;
+        assertTrue(guestListManager.removeGuest("Remove Test User"));
+        numberOfGuests--;
+        assertFalse(guestListManager.removeGuest("Remove Test User")); // Already removed, should return false
     }
 
     @Test
     public void testFindGuest() {
-        Guest temp = new Guest("Random Use", "family");
+        Guest temp = new Guest("Find Test User", "family");
         guestListManager.addGuest(temp);
-        assertTrue(guestListManager.removeGuest("Random Use"));
-        assertEquals(temp, guestListManager.findGuest("Random Use"));
+        numberOfGuests++;
+        assertEquals(temp, guestListManager.findGuest("Find Test User"));
+        assertTrue(guestListManager.removeGuest("Find Test User"));
+        numberOfGuests--;
+        assertNull(guestListManager.findGuest("Find Test User")); // Removed, should be null
         assertNull(guestListManager.findGuest("qwertyuiop"));
     }
 

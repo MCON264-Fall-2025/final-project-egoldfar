@@ -17,7 +17,7 @@ A console-based event planning application for managing guests, venues, seating 
 
 ### SeatingPlanner
 - **HashMap<String, ArrayList<Guest>>**: Groups guests by category (group tag) for easier seating arrangement.
-- **HashMap<Integer, Guest[]>**: Maps table numbers to their assigned guests. An array is used instead of ArrayList because each table has a predefined size (seats per table).
+- **HashMap<Integer, List<Guest>>**: Maps table numbers to their assigned guests.
 
 ## Algorithms
 
@@ -35,6 +35,18 @@ A console-based event planning application for managing guests, venues, seating 
 | **Finding a guest** | O(1) | HashMap lookup by name |
 | **Selecting a venue** | O(n log n) | Sorting dominates; linear search through sorted list is O(n) |
 | **Generating seating** | O(n) | Iterates through all guests once, grouped by category |
+
+## Design Rationale
+
+The rationale behind each data structure choice is to optimize for the most common operations:
+
+- **LinkedList + HashMap for guests**: The justification is that we need both efficient iteration (LinkedList) and fast lookup by name (HashMap O(1)). This dual structure ensures we never sacrifice one operation for the other.
+
+- **Deque + Stack for tasks**: The explanation for using a Deque is that it supports FIFO execution of tasks. The Stack naturally handles LIFO undo operations, allowing retrieval of the most recently completed task.
+
+- **Sorted ArrayList for venues**: Sorting venues by cost allows early termination when searching, improving average-case performance.
+
+- **HashMap for seating**: Using group tags as keys provides O(1) access to guest groups, making the seating algorithm efficient.
 
 
 
