@@ -14,20 +14,27 @@ public class SeatingPlanner {
         this.guestListManager = guestListManager;
     }
     public Map<Integer, Guest[]> generateSeating() {
-        int numTables = venue.getTables();
         int seatsPerTable = venue.getSeatsPerTable();
         int currentTable = 0;
         int currentGuest = 0;
-        Map<Integer,Guest[seatsPerTable]> seating = new HashMap<>();
+        Map<Integer,Guest[]> seating = new HashMap<>();
         Map<String, ArrayList<Guest>> byGroup = guestListManager.getGuestsByGroup();
             for(String key : byGroup.keySet()) {
-                int neededTablesForGroup = byGroup.get(key).size()/ seatsPerTable;
-                if (byGroup.get(key).size()% seatsPerTable != 0) neededTablesForGroup++;
+                ArrayList<Guest> groupGuests = byGroup.get(key);
+                int neededTablesForGroup = groupGuests.size() / seatsPerTable;
+                if (groupGuests.size() % seatsPerTable != 0) neededTablesForGroup++;
                 currentGuest = 0;
                 for(int i = 0; i < neededTablesForGroup; i++) {
+                    Guest[] tableGuests = new Guest[seatsPerTable];
                     for(int j = 0; j < seatsPerTable; j++) {
-
+                        if (currentGuest < groupGuests.size()) {
+                            tableGuests[j] = groupGuests.get(currentGuest);
+                            currentGuest++;
+                        } else {
+                            tableGuests[j] = null;
+                        }
                     }
+                    seating.put(currentTable, tableGuests);
                     currentTable++;
                 }
             }

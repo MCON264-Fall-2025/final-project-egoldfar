@@ -6,7 +6,7 @@ import java.util.*;
 public class VenueSelector {
     private final List<Venue> venues;
 
-    public VenueSelector(List<Venue> venues) { this.venues = venues; }
+    public VenueSelector(List<Venue> venues) { this.venues = new ArrayList<>(venues); }
     public Venue selectVenue(double budget, int guestCount) {
         Collections.sort(venues);
         Venue venue = null;
