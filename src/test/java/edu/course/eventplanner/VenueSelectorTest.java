@@ -1,6 +1,7 @@
 package edu.course.eventplanner;
 
 import edu.course.eventplanner.model.Venue;
+import edu.course.eventplanner.util.Generators;
 
 import edu.course.eventplanner.service.VenueSelector;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +29,22 @@ public class VenueSelectorTest {
         assertEquals(venueSelector.selectVenue(1000, 100), venueList.get(0));
         assertEquals(venueSelector.selectVenue(5000, 250), venueList.get(1));
         assertNull(venueSelector.selectVenue(4000, 500));
+    }
+
+    @Test
+    public void testGenerateVenues() {
+        List<Venue> venues = Generators.generateVenues();
+        assertNotNull(venues);
+        assertEquals(3, venues.size());
+        assertEquals("Community Hall", venues.get(0).getName());
+        assertEquals("Garden Hall", venues.get(1).getName());
+        assertEquals("Grand Ballroom", venues.get(2).getName());
+    }
+
+    @Test
+    public void testEmptyVenueList() {
+        VenueSelector emptySelector = new VenueSelector(new ArrayList<>());
+        assertNull(emptySelector.selectVenue(5000, 100));
     }
 
 }
