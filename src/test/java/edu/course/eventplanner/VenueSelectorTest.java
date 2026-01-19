@@ -8,26 +8,29 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 public class VenueSelectorTest {
-    static List<Venue> venueList = new ArrayList<>();
+    static TreeSet<Venue> venueSet = new TreeSet<>();
     static VenueSelector venueSelector;
     @BeforeAll
     public static void setUp() throws Exception {
-        venueList.add(new Venue("A", 1000, 100, 10, 10));
-        venueList.add(new Venue("B", 2000, 300, 30, 10));
-        venueList.add(new Venue("C", 3000, 300, 10, 30));
-        venueList.add(new Venue("D", 4000, 400, 10, 10));
-        venueSelector = new VenueSelector(venueList);
+        venueSet.add(new Venue("A", 1000, 100, 10, 10));
+        venueSet.add(new Venue("B", 2000, 300, 30, 10));
+        venueSet.add(new Venue("C", 3000, 300, 10, 30));
+        venueSet.add(new Venue("D", 4000, 400, 10, 10));
+        venueSelector = new VenueSelector(venueSet);
     }
 
     @Test
     public void testVenueSelector() {
         assertNull(venueSelector.selectVenue(100, 500));
-        assertEquals(venueSelector.selectVenue(1000, 100), venueList.get(0));
-        assertEquals(venueSelector.selectVenue(5000, 250), venueList.get(1));
+        // Find venue A by name since TreeSet ordering may differ
+        Venue venueA = venueSet.stream().filter(v -> v.getName().equals("A")).findFirst().orElse(null);
+        Venue venueB = venueSet.stream().filter(v -> v.getName().equals("B")).findFirst().orElse(null);
+        assertEquals(venueA, venueSelector.selectVenue(1000, 100));
+        assertEquals(venueB, venueSelector.selectVenue(5000, 250));
         assertNull(venueSelector.selectVenue(4000, 500));
     }
 
@@ -43,7 +46,7 @@ public class VenueSelectorTest {
 
     @Test
     public void testEmptyVenueList() {
-        VenueSelector emptySelector = new VenueSelector(new ArrayList<>());
+        VenueSelector emptySelector = new VenueSelector(new TreeSet<>());
         assertNull(emptySelector.selectVenue(5000, 100));
     }
 

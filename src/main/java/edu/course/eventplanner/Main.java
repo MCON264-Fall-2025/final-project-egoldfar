@@ -1,7 +1,5 @@
 package edu.course.eventplanner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +16,8 @@ import edu.course.eventplanner.util.Generators;
 
 public class Main {
 
-    static Scanner keyboard = new Scanner(System.in);
-
     public static void main(String[] args) {
+        Scanner keyboard = new Scanner(System.in);
 
         GuestListManager guestListManager = new GuestListManager();
         VenueSelector venueSelector = null;
@@ -30,7 +27,7 @@ public class Main {
 
         int choice;
         do {
-            choice = printMenu();
+            choice = printMenu(keyboard);
             switch (choice) {
                 case 0:
                     break;
@@ -38,16 +35,16 @@ public class Main {
                     venueSelector = loadSampleData(guestListManager);
                     break;
                 case 2:
-                    addGuest(guestListManager);
+                    addGuest(keyboard, guestListManager);
                     break;
                 case 3:
-                    removeGuest(guestListManager);
+                    removeGuest(keyboard, guestListManager);
                     break;
                 case 4:
                     if (venueSelector == null) {
                         System.out.println("Please load sample data first to get available venues.");
                     } else {
-                        venue = venueSelect(venueSelector, guestListManager);
+                        venue = venueSelect(keyboard, venueSelector, guestListManager);
                         if (venue != null) {
                             seatingPlanner = new SeatingPlanner(venue);
                         }
@@ -61,7 +58,7 @@ public class Main {
                     }
                     break;
                 case 6: 
-                    addTask(taskManager);
+                    addTask(keyboard, taskManager);
                     break;
                 case 7:
                     executeTask(taskManager);
@@ -78,7 +75,7 @@ public class Main {
         } while (choice != 0);
     }
 
-    public static int printMenu() {
+    public static int printMenu(Scanner keyboard) {
         System.out.println("\nEvent Planner Menu");
         System.out.println("1. Load sample data");
         System.out.println("2. Add guest");
@@ -90,7 +87,7 @@ public class Main {
         System.out.println("8. Undo last task");
         System.out.println("9. Print event summary");
         System.out.println("0. Quit");
-        int choice = intInput("Choice: ");
+        int choice = intInput(keyboard, "Choice: ");
         return choice;
     }
 
@@ -109,7 +106,7 @@ public class Main {
         return new VenueSelector(venues);
     }
 
-    public static void addGuest(GuestListManager guestListManager) {
+    public static void addGuest(Scanner keyboard, GuestListManager guestListManager) {
         if(keyboard.hasNextLine()) keyboard.nextLine();
         System.out.print("Enter guest name: ");
         String name = keyboard.nextLine();
@@ -119,7 +116,7 @@ public class Main {
         guestListManager.addGuest(guest);
     }
 
-    public static void removeGuest(GuestListManager guestListManager) {
+    public static void removeGuest(Scanner keyboard, GuestListManager guestListManager) {
         System.out.print("Enter guest name to remove: ");
         String name = keyboard.nextLine();
         boolean removed = guestListManager.removeGuest(name);
@@ -130,12 +127,12 @@ public class Main {
         }
     }
 
-    public static Venue venueSelect(VenueSelector venueSelector, GuestListManager guestListManager) {
+    public static Venue venueSelect(Scanner keyboard, VenueSelector venueSelector, GuestListManager guestListManager) {
         System.out.print("Enter budget for venue: ");
         double budget = keyboard.nextDouble();
         int guestCount;
         if (guestListManager.getGuestCount() == 0) {
-            guestCount = intInput("Enter number of guests: ");
+            guestCount = intInput(keyboard, "Enter number of guests: ");
         } else {
             guestCount = guestListManager.getGuestCount();
         }
@@ -159,7 +156,7 @@ public class Main {
         }
     }
 
-    public static void addTask(TaskManager taskManager) {
+    public static void addTask(Scanner keyboard, TaskManager taskManager) {
         if(keyboard.hasNextLine()) keyboard.nextLine();
         System.out.print("Enter task description: ");
         String description = keyboard.nextLine();
@@ -186,54 +183,62 @@ public class Main {
     }
 
     public static void printEventSummary(GuestListManager guestListManager, Venue venue, TaskManager taskManager, SeatingPlanner seatingPlanner) {
-        System.out.println("\n===== Event Summary =====");
+        System.out.println(buildEventSummary(guestListManager, venue, taskManager, seatingPlanner));
+    }
+
+    public static String buildEventSummary(GuestListManager guestListManager, Venue venue, TaskManager taskManager, SeatingPlanner seatingPlanner) {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("\n===== Event Summary =====");
         
         // Guest information
-        System.out.println("\n--- Guests ---");
-        System.out.println("Total guests: " + guestListManager.getGuestCount());
+        sb.append("\n\n--- Guests ---");
+        sb.append("\nTotal guests: ").append(guestListManager.getGuestCount());
         if (guestListManager.getGuestCount() > 0) {
-            System.out.println("Guest list:");
+            sb.append("\nGuest list:");
             for (Guest guest : guestListManager.getAllGuests()) {
-                System.out.println("  - " + guest.getName() + " (Group: " + guest.getGroupTag() + ")");
+                sb.append("\n  - ").append(guest.getName()).append(" (Group: ").append(guest.getGroupTag()).append(")");
             }
         }
         
         // Venue information
-        System.out.println("\n--- Venue ---");
+        sb.append("\n\n--- Venue ---");
         if (venue != null) {
-            System.out.println("Selected venue: " + venue.getName());
-            System.out.println("Capacity: " + venue.getCapacity());
-            System.out.println("Cost: $" + venue.getCost());
-            System.out.println("Tables: " + venue.getTables() + " (" + venue.getSeatsPerTable() + " seats each)");
+            sb.append("\nSelected venue: ").append(venue.getName());
+            sb.append("\nCapacity: ").append(venue.getCapacity());
+            sb.append("\nCost: $").append(venue.getCost());
+            sb.append("\nTables: ").append(venue.getTables()).append(" (").append(venue.getSeatsPerTable()).append(" seats each)");
         } else {
-            System.out.println("No venue selected.");
+            sb.append("\nNo venue selected.");
         }
         
         // Seating information
-        System.out.println("\n--- Seating Arrangement ---");
+        sb.append("\n\n--- Seating Arrangement ---");
         if (seatingPlanner != null && guestListManager.getGuestCount() > 0) {
             Map<Integer, List<Guest>> seating = seatingPlanner.generateSeating(guestListManager.getAllGuests());
             for (Integer tableNumber : seating.keySet()) {
-                System.out.println("Table " + (tableNumber + 1) + ":");
+                sb.append("\nTable ").append(tableNumber + 1).append(":");
                 List<Guest> tableGuests = seating.get(tableNumber);
                 for (Guest guest : tableGuests) {
-                    System.out.println("  - " + guest.getName());
+                    sb.append("\n  - ").append(guest.getName());
                 }
             }
         } else if (venue == null) {
-            System.out.println("No venue selected - cannot generate seating.");
+            sb.append("\nNo venue selected - cannot generate seating.");
         } else {
-            System.out.println("No guests to seat.");
+            sb.append("\nNo guests to seat.");
         }
         
         // Task information
-        System.out.println("\n--- Tasks ---");
-        System.out.println("Remaining tasks: " + taskManager.remainingTaskCount());
+        sb.append("\n\n--- Tasks ---");
+        sb.append("\nRemaining tasks: ").append(taskManager.remainingTaskCount());
         
-        System.out.println("\n============================");
+        sb.append("\n\n============================");
+        
+        return sb.toString();
     }
 
-    public static int intInput(String question) {
+    public static int intInput(Scanner keyboard, String question) {
         while (true)
             try {
                 System.out.print(question);
