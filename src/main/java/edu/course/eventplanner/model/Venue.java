@@ -1,6 +1,6 @@
 package edu.course.eventplanner.model;
 
-public class Venue {
+public class Venue implements Comparable<Venue>{
     private final String name;
     private final double cost;
     private final int capacity;
@@ -18,4 +18,21 @@ public class Venue {
     public int getCapacity() { return capacity; }
     public int getTables() { return tables; }
     public int getSeatsPerTable() { return seatsPerTable; }
+
+    @Override
+    public int compareTo(Venue other) {
+        if (this.cost < other.cost) {
+            return -1;
+        } else if (this.cost > other.cost) {
+            return 1;
+        } else {
+            if (this.capacity < other.capacity) {
+                return -1;
+            } else if (this.capacity > other.capacity) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
 }
